@@ -103,6 +103,7 @@ module Paranoia
         noop_if_frozen = ActiveRecord.version < Gem::Version.new("4.1")
         if within_recovery_window?(recovery_window_range) && ((noop_if_frozen && !@attributes.frozen?) || !noop_if_frozen)
           @_disable_counter_cache = !paranoia_destroyed?
+          add_to_transaction
           write_attribute paranoia_column, paranoia_sentinel_value
           update_columns(paranoia_restore_attributes)
           each_counter_cached_associations do |association|
